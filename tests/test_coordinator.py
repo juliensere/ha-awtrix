@@ -29,7 +29,7 @@ async def test_coordinator_fetch(hass):
     with aioresponses() as m:
         m.get(f"http://{HOST}/api/loop", payload=MOCK_LOOP)
         m.get(f"http://{HOST}/api/stats", payload=MOCK_STATS)
-        await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_refresh()
 
     assert coordinator.data.apps == ["time", "myapp"]
     assert coordinator.data.battery == 80
@@ -43,13 +43,13 @@ async def test_coordinator_fetch(hass):
 @pytest.mark.asyncio
 async def test_coordinator_unreachable(hass):
     from aiohttp import ClientConnectionError
-    from homeassistant.exceptions import ConfigEntryNotReady
 
     coordinator = make_coordinator(hass)
     with aioresponses() as m:
         m.get(f"http://{HOST}/api/loop", exception=ClientConnectionError())
-        with pytest.raises(ConfigEntryNotReady):
-            await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_refresh()
+
+    assert coordinator.last_update_success is False
 
 
 @pytest.mark.asyncio
@@ -58,7 +58,7 @@ async def test_optimistic_brightness(hass):
     with aioresponses() as m:
         m.get(f"http://{HOST}/api/loop", payload=MOCK_LOOP)
         m.get(f"http://{HOST}/api/stats", payload=MOCK_STATS)
-        await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_refresh()
 
     with aioresponses() as m:
         m.post(f"http://{HOST}/api/settings")
@@ -73,7 +73,7 @@ async def test_optimistic_power(hass):
     with aioresponses() as m:
         m.get(f"http://{HOST}/api/loop", payload=MOCK_LOOP)
         m.get(f"http://{HOST}/api/stats", payload=MOCK_STATS)
-        await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_refresh()
 
     with aioresponses() as m:
         m.post(f"http://{HOST}/api/power")
@@ -88,6 +88,6 @@ async def test_apps_sorted_by_position(hass):
     with aioresponses() as m:
         m.get(f"http://{HOST}/api/loop", payload={"b_app": 1, "a_app": 0})
         m.get(f"http://{HOST}/api/stats", payload=MOCK_STATS)
-        await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_refresh()
 
     assert coordinator.data.apps == ["a_app", "b_app"]
