@@ -19,7 +19,6 @@ async def async_setup_entry(
 
 class AwtrixLight(CoordinatorEntity[AwtrixCoordinator], LightEntity):
     _attr_supported_color_modes = {ColorMode.BRIGHTNESS}
-    _attr_color_mode = ColorMode.BRIGHTNESS
     _attr_has_entity_name = True
     _attr_name = None
 
@@ -30,6 +29,10 @@ class AwtrixLight(CoordinatorEntity[AwtrixCoordinator], LightEntity):
     @property
     def device_info(self):
         return self.coordinator.device_info
+
+    @property
+    def color_mode(self) -> ColorMode:
+        return ColorMode.BRIGHTNESS
 
     @property
     def is_on(self) -> bool:
