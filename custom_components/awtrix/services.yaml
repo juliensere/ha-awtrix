@@ -1,0 +1,153 @@
+notify:
+  name: Send notification
+  description: Display a one-shot notification on an AWTRIX device.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+    text:
+      name: Text
+      selector:
+        text:
+    icon:
+      name: Icon
+      description: Icon ID (numeric), filename, or base64 8×8 JPEG.
+      selector:
+        text:
+    duration:
+      name: Duration (s)
+      selector:
+        number:
+          min: 1
+          max: 300
+          unit_of_measurement: s
+    hold:
+      name: Hold
+      description: Freeze the display on this notification until dismissed.
+      selector:
+        boolean:
+    color:
+      name: Color
+      description: Text color as RRGGBB hex.
+      selector:
+        text:
+    progress:
+      name: Progress
+      description: Progress bar value 0–100.
+      selector:
+        number:
+          min: 0
+          max: 100
+    bar:
+      name: Bar chart
+      description: Array of up to 16 values.
+      selector:
+        object:
+
+dismiss:
+  name: Dismiss notification
+  description: Dismiss the current hold notification on an AWTRIX device.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+
+set_app:
+  name: Set app
+  description: Create or update a custom app on an AWTRIX device.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+    name:
+      name: App name
+      required: true
+      selector:
+        text:
+    text:
+      name: Text
+      selector:
+        text:
+    icon:
+      name: Icon
+      description: Icon ID (numeric), filename, or base64 8×8 JPEG.
+      selector:
+        text:
+    duration:
+      name: Duration (s)
+      selector:
+        number:
+          min: 1
+          max: 300
+          unit_of_measurement: s
+    lifetime:
+      name: Lifetime (s)
+      description: Auto-remove if not refreshed within this delay. 0 = never.
+      selector:
+        number:
+          min: 0
+          max: 86400
+          unit_of_measurement: s
+    save:
+      name: Persist across reboot
+      description: Store the app in flash (avoid for high-frequency updates).
+      selector:
+        boolean:
+    color:
+      name: Color
+      description: Text color as RRGGBB hex.
+      selector:
+        text:
+    progress:
+      name: Progress
+      description: Progress bar value 0–100.
+      selector:
+        number:
+          min: 0
+          max: 100
+    bar:
+      name: Bar chart
+      description: Array of up to 16 values.
+      selector:
+        object:
+
+delete_app:
+  name: Delete app
+  description: Remove a custom app from an AWTRIX device.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+    name:
+      name: App name
+      required: true
+      selector:
+        text:
+
+switch_app:
+  name: Switch to app
+  description: Immediately switch the display to a specific app.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+    name:
+      name: App name
+      required: true
+      selector:
+        text:

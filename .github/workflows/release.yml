@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  release:
+    name: Build ZIP and publish release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ha-awtrix.zip
+        run: |
+          cd custom_components
+          zip -r ../ha-awtrix.zip ha-awtrix/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ha-awtrix.zip
+          generate_release_notes: true
