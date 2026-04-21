@@ -151,3 +151,43 @@ switch_app:
       required: true
       selector:
         text:
+
+set_indicator:
+  name: Set indicator
+  description: Set one of the three LED indicators on an AWTRIX device.
+  fields:
+    device_id:
+      name: Device
+      required: true
+      selector:
+        device:
+          integration: awtrix
+    indicator:
+      name: Indicator
+      description: Which indicator to control (1 = top-right, 2 = right, 3 = bottom-right).
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 3
+    color:
+      name: Color
+      description: Color as #RRGGBB hex. Leave empty to turn off the indicator.
+      selector:
+        text:
+    blink:
+      name: Blink interval (ms)
+      description: Blink interval in milliseconds. Incompatible with fade.
+      selector:
+        number:
+          min: 100
+          max: 10000
+          unit_of_measurement: ms
+    fade:
+      name: Fade interval (ms)
+      description: Fade on/off interval in milliseconds. Incompatible with blink.
+      selector:
+        number:
+          min: 100
+          max: 10000
+          unit_of_measurement: ms

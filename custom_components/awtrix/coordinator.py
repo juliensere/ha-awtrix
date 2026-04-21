@@ -32,6 +32,14 @@ class AwtrixData:
     matrix_on: bool = True
     version: str = ""
     uid: str = ""
+    # from /api/settings
+    auto_brightness: bool = False
+    auto_transition: bool = True
+    app_time: bool = True
+    app_date: bool = True
+    app_temp: bool = True
+    app_hum: bool = True
+    app_bat: bool = True
 
 
 class AwtrixCoordinator(DataUpdateCoordinator[AwtrixData]):
@@ -66,6 +74,9 @@ class AwtrixCoordinator(DataUpdateCoordinator[AwtrixData]):
             async with session.get(f"{self._base_url}/api/stats", timeout=_TIMEOUT) as r:
                 r.raise_for_status()
                 stats = await r.json()
+            async with session.get(f"{self._base_url}/api/settings", timeout=_TIMEOUT) as r:
+                r.raise_for_status()
+                settings = await r.json()
         except (aiohttp.ClientError, TimeoutError) as err:
             raise UpdateFailed(f"Cannot reach {self.host}: {err}") from err
 
@@ -85,6 +96,13 @@ class AwtrixCoordinator(DataUpdateCoordinator[AwtrixData]):
             matrix_on=stats.get("matrix", True),
             version=stats.get("version", ""),
             uid=stats.get("uid", ""),
+            auto_brightness=settings.get("ABRI", False),
+            auto_transition=settings.get("ATRANS", True),
+            app_time=settings.get("TIM", True),
+            app_date=settings.get("DAT", True),
+            app_temp=settings.get("TEMP", True),
+            app_hum=settings.get("HUM", True),
+            app_bat=settings.get("BAT", True),
         )
 
     async def _post(self, path: str, json: dict | None = None) -> None:
@@ -144,3 +162,40 @@ class AwtrixCoordinator(DataUpdateCoordinator[AwtrixData]):
 
     async def async_switch_app(self, name: str) -> None:
         await self._post("/api/switch", {"name": name})
+
+    async def async_next_app(self) -> None:
+        await self._post("/api/nextapp")
+
+    async def async_previous_app(self) -> None:
+        await self._post("/api/previousapp")
+
+    async def async_set_indicator(
+        self,
+        number: int,
+        color: str,
+        blink: int | None = None,
+        fade: int | None = None,
+    ) -> None:
+        if not color:
+            payload: dict = {"color": [0, 0, 0]}
+        else:
+            payload = {"color": color}
+            if blink is not None:
+                payload["blink"] = blink
+            if fade is not None:
+                payload["fade"] = fade
+        await self._post(f"/api/indicator{number}", payload)
+
+    async def async_set_setting(self, key: str, value: object) -> None:
+        await self._post("/api/settings", {key: value})
+        field = {
+            "ABRI": "auto_brightness",
+            "ATRANS": "auto_transition",
+            "TIM": "app_time",
+            "DAT": "app_date",
+            "TEMP": "app_temp",
+            "HUM": "app_hum",
+            "BAT": "app_bat",
+        }.get(key)
+        if field:
+            self._optimistic_update(**{field: value})

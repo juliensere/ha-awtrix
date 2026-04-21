@@ -7,7 +7,7 @@ from homeassistant.helpers import device_registry as dr
 from .const import CONF_HOST, DOMAIN, PLATFORMS
 from .coordinator import AwtrixCoordinator
 
-_SERVICES = ("notify", "dismiss", "set_app", "delete_app", "switch_app")
+_SERVICES = ("notify", "dismiss", "set_app", "delete_app", "switch_app", "set_indicator")
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -69,8 +69,18 @@ def _async_register_services(hass: HomeAssistant) -> None:
         if coordinator := _get_coordinator(hass, call.data["device_id"]):
             await coordinator.async_switch_app(call.data["name"])
 
+    async def handle_set_indicator(call: ServiceCall) -> None:
+        if coordinator := _get_coordinator(hass, call.data["device_id"]):
+            await coordinator.async_set_indicator(
+                number=call.data["indicator"],
+                color=call.data.get("color", ""),
+                blink=call.data.get("blink"),
+                fade=call.data.get("fade"),
+            )
+
     hass.services.async_register(DOMAIN, "notify", handle_notify)
     hass.services.async_register(DOMAIN, "dismiss", handle_dismiss)
     hass.services.async_register(DOMAIN, "set_app", handle_set_app)
     hass.services.async_register(DOMAIN, "delete_app", handle_delete_app)
     hass.services.async_register(DOMAIN, "switch_app", handle_switch_app)
+    hass.services.async_register(DOMAIN, "set_indicator", handle_set_indicator)

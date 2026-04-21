@@ -5,6 +5,11 @@ import pytest
 
 pytest_plugins = ["pytest_homeassistant_custom_component"]
 
+
+@pytest.fixture(autouse=True)
+def auto_enable_custom_integrations(enable_custom_integrations):
+    yield
+
 # Python 3.12 asyncio calls shutdown_default_executor() in teardown, which
 # starts a _run_safe_shutdown_loop thread. The plugin's verify_cleanup fixture
 # does the same call and then flags that thread as unexpected. Override the

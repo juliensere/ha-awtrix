@@ -9,6 +9,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import CONF_HOST, DOMAIN
 
 _SCHEMA = vol.Schema({vol.Required(CONF_HOST): str})
+_TIMEOUT = aiohttp.ClientTimeout(total=10)
 
 
 class AwtrixConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -19,20 +20,20 @@ class AwtrixConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             host = user_input[CONF_HOST].strip()
-            await self.async_set_unique_id(host)
-            self._abort_if_unique_id_configured()
-
             session = async_get_clientsession(self.hass)
             try:
                 async with session.get(
-                    f"http://{host}/api/loop",
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    f"http://{host}/api/stats", timeout=_TIMEOUT
                 ) as r:
                     r.raise_for_status()
+                    stats = await r.json()
             except (aiohttp.ClientError, TimeoutError):
                 errors["base"] = "cannot_connect"
             else:
-                return self.async_create_entry(title=host, data={CONF_HOST: host})
+                uid = stats.get("uid") or host
+                await self.async_set_unique_id(uid)
+                self._abort_if_unique_id_configured()
+                return self.async_create_entry(title=uid, data={CONF_HOST: host})
 
         return self.async_show_form(
             step_id="user",
