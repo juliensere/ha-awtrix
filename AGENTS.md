@@ -55,6 +55,15 @@ chore: bump pytest-homeassistant-custom-component
 
 Types: `feat`, `fix`, `chore`, `test`, `docs`, `refactor`, `ci`.
 
+## Versioning and tags
+
+Use **semantic versioning without a `v` prefix**: `1.0.0`, `1.2.3`, never `v1.0.0`.
+
+```bash
+git tag 1.0.0
+git push origin 1.0.0
+```
+
 ## Key constraints
 
 - `async_get_clientsession(hass)` — always use the shared HA session, never create an `aiohttp.ClientSession` directly.
