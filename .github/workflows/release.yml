@@ -29,13 +29,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build ha-awtrix.zip
+      - name: Set version in manifest.json
+        run: |
+          VERSION="${{ github.ref_name }}"
+          jq --arg v "$VERSION" '.version = $v' custom_components/awtrix/manifest.json > /tmp/manifest.json
+          mv /tmp/manifest.json custom_components/awtrix/manifest.json
+
+      - name: Build ha-awtrix-${{ github.ref_name }}.zip
         run: |
           cd custom_components
-          zip -r ../ha-awtrix.zip awtrix/
+          zip -r ../ha-awtrix-${{ github.ref_name }}.zip awtrix/ \
+            -x "awtrix/__pycache__/*" \
+            -x "awtrix/*/__pycache__/*"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ha-awtrix.zip
+          files: ha-awtrix-${{ github.ref_name }}.zip
           generate_release_notes: true
