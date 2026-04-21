@@ -4,6 +4,8 @@
 
 Custom integration for [AWTRIX 3](https://blueforcer.github.io/awtrix3/) LED matrix displays. Controls your device locally via HTTP polling — no cloud required.
 
+> **Who is this for?** AWTRIX 3 supports both HTTP and MQTT. This integration targets users who prefer a simple setup without running an MQTT broker. If you already use MQTT in your Home Assistant installation, the [official MQTT integration](https://www.home-assistant.io/integrations/mqtt) may offer more flexibility.
+
 ## Features
 
 - **Light entity** — turn the matrix on/off and control brightness
