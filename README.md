@@ -1,5 +1,7 @@
 # AWTRIX for Home Assistant
 
+![AWTRIX for Home Assistant](doc/logo-ha-awtrix.png)
+
 Custom integration for [AWTRIX 3](https://blueforcer.github.io/awtrix3/) LED matrix displays. Controls your device locally via HTTP polling — no cloud required.
 
 ## Features
