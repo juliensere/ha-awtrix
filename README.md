@@ -24,7 +24,9 @@ Custom integration for [AWTRIX 3](https://blueforcer.github.io/awtrix3/) LED mat
 
 ### Manual
 
-Copy `custom_components/awtrix/` into your `<config>/custom_components/` folder and restart Home Assistant.
+1. Download the [latest release ZIP](https://github.com/juliensere/ha-awtrix/releases/latest)
+2. Extract and copy `custom_components/awtrix/` into your `<config>/custom_components/` folder
+3. Restart Home Assistant
 
 ## Configuration
 
